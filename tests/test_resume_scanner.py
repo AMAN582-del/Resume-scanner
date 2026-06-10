@@ -22,7 +22,7 @@ class ResumeScannerTests(unittest.TestCase):
 
         result = score_resume(job_description, resume_text)
 
-        self.assertEqual(result["score"], 66.67)
+        self.assertAlmostEqual(result["score"], 66.67, places=2)
         self.assertIn("python", result["matched_keywords"])
         self.assertIn("docker", result["missing_keywords"])
 

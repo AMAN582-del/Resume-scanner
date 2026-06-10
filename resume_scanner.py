@@ -34,6 +34,8 @@ STOPWORDS = {
     "ability",
 }
 
+MIN_TOKEN_LENGTH = 2
+
 
 def _tokenize(text):
     tokens = []
@@ -45,7 +47,9 @@ def _tokenize(text):
 
 
 def extract_keywords(job_description, max_keywords=20):
-    tokens = [token for token in _tokenize(job_description) if len(token) > 2 and token not in STOPWORDS]
+    tokens = [
+        token for token in _tokenize(job_description) if len(token) > MIN_TOKEN_LENGTH and token not in STOPWORDS
+    ]
     counts = Counter(tokens)
     return [word for word, _ in counts.most_common(max_keywords)]
 
@@ -64,6 +68,7 @@ def score_resume(job_description, resume_text):
 
 
 def rank_resumes(job_description, resumes):
+    """Return resumes sorted by score descending, then candidate name ascending."""
     ranked = []
     for candidate_name, resume_text in resumes.items():
         result = score_resume(job_description, resume_text)
