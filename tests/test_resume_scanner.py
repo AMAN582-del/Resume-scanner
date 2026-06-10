@@ -22,6 +22,7 @@ class ResumeScannerTests(unittest.TestCase):
 
         result = score_resume(job_description, resume_text)
 
+        # 2 matched out of 3 keywords = (2/3) * 100 = 66.67%
         self.assertAlmostEqual(result["score"], 66.67, places=2)
         self.assertIn("python", result["matched_keywords"])
         self.assertIn("sql", result["matched_keywords"])

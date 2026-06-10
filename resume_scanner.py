@@ -34,7 +34,7 @@ STOPWORDS = {
     "ability",
 }
 
-MIN_TOKEN_LENGTH = 2
+MIN_KEYWORD_LENGTH = 2
 
 
 def _tokenize(text):
@@ -47,15 +47,17 @@ def _tokenize(text):
 
 
 def extract_keywords(job_description, max_keywords=20):
+    """Extract frequent, non-generic keywords from a job description."""
     tokens = []
     for token in _tokenize(job_description):
-        if len(token) >= MIN_TOKEN_LENGTH and token not in STOPWORDS:
+        if len(token) >= MIN_KEYWORD_LENGTH and token not in STOPWORDS:
             tokens.append(token)
     counts = Counter(tokens)
     return [word for word, _ in counts.most_common(max_keywords)]
 
 
 def score_resume(job_description, resume_text):
+    """Score a resume by keyword match percentage against the job description."""
     keywords = extract_keywords(job_description)
     if not keywords:
         return {"score": 0.0, "matched_keywords": [], "missing_keywords": []}
@@ -86,8 +88,11 @@ def rank_resumes(job_description, resumes):
 
 
 def _read_text(path):
-    with open(path, "r", encoding="utf-8") as file:
-        return file.read()
+    try:
+        with open(path, "r", encoding="utf-8") as file:
+            return file.read()
+    except OSError as error:
+        raise ValueError(f"Unable to read file: {path}") from error
 
 
 def main():
@@ -96,8 +101,12 @@ def main():
     parser.add_argument("--resumes", required=True, nargs="+", help="Paths to resume text files")
     args = parser.parse_args()
 
-    job_description = _read_text(args.job)
-    resumes = {path: _read_text(path) for path in args.resumes}
+    try:
+        job_description = _read_text(args.job)
+        resumes = {path: _read_text(path) for path in args.resumes}
+    except ValueError as error:
+        parser.error(str(error))
+        return
     ranked = rank_resumes(job_description, resumes)
 
     print("Resume Match Results")
