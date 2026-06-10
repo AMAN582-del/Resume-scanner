@@ -47,9 +47,10 @@ def _tokenize(text):
 
 
 def extract_keywords(job_description, max_keywords=20):
-    tokens = [
-        token for token in _tokenize(job_description) if len(token) >= MIN_TOKEN_LENGTH and token not in STOPWORDS
-    ]
+    tokens = []
+    for token in _tokenize(job_description):
+        if len(token) >= MIN_TOKEN_LENGTH and token not in STOPWORDS:
+            tokens.append(token)
     counts = Counter(tokens)
     return [word for word, _ in counts.most_common(max_keywords)]
 

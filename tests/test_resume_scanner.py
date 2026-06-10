@@ -24,6 +24,7 @@ class ResumeScannerTests(unittest.TestCase):
 
         self.assertAlmostEqual(result["score"], 66.67, places=2)
         self.assertIn("python", result["matched_keywords"])
+        self.assertIn("sql", result["matched_keywords"])
         self.assertNotIn("sql", result["missing_keywords"])
         self.assertIn("docker", result["missing_keywords"])
 
