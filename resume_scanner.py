@@ -1,4 +1,5 @@
 import argparse
+import os
 import re
 from collections import Counter
 
@@ -74,17 +75,16 @@ def rank_resumes(job_description, resumes):
     """Return resumes sorted by score descending, then candidate name ascending."""
     ranked = []
     for candidate_name, resume_text in resumes.items():
-        candidate = str(candidate_name)
         result = score_resume(job_description, resume_text)
         ranked.append(
             {
-                "candidate": candidate,
+                "candidate": candidate_name,
                 "score": result["score"],
                 "matched_keywords": result["matched_keywords"],
                 "missing_keywords": result["missing_keywords"],
             }
         )
-    return sorted(ranked, key=lambda item: (-item["score"], item["candidate"].lower()))
+    return sorted(ranked, key=lambda item: (-item["score"], os.path.basename(str(item["candidate"])).lower()))
 
 
 def _read_text(path):
