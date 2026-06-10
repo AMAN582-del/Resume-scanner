@@ -84,7 +84,10 @@ def rank_resumes(job_description, resumes):
                 "missing_keywords": result["missing_keywords"],
             }
         )
-    return sorted(ranked, key=lambda item: (-item["score"], os.path.basename(str(item["candidate"])).lower()))
+    def _sort_key(item):
+        return -item["score"], os.path.basename(item["candidate"]).lower()
+
+    return sorted(ranked, key=_sort_key)
 
 
 def _read_text(path):
